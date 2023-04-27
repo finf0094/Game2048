@@ -4,13 +4,15 @@ import Block from "./components/Block.jsx";
 import cloneDeep from "lodash.clonedeep"
 import {useEvent} from "./utils/useEvent.js";
 import {btn} from "./styledComponent/styles.js";
+import Timer from "./components/Timer.jsx";
 
 
 function App() {
-    const [size, setSize] = useState(4)
+    const [size, setSize] = useState(4);
     const newDataArr = Array.from({ length: size }, () => Array.from({ length: size }, () => 0));
-    const [data, setData] = useState(newDataArr)
+    const [data, setData] = useState(newDataArr);
     const [bestResult, setBestResult] = useState(0);
+    const [timer, setTimer] = useState(0);
 
     function sumArray(arr) {
         let sum = 0;
@@ -26,13 +28,14 @@ function App() {
 
     localStorage.setItem('best_result', JSON.stringify(bestResult));
 
-    const savedResult = JSON.parse(localStorage.getItem('best_result'));
+    let savedResult = JSON.parse(localStorage.getItem('best_result'));
 
     if (sumArray(data) > bestResult) {
         setBestResult(sumArray(data))
     }
 
     function initialize() {
+        setTimer(0)
         const newData = newDataArr;
 
         // Add two random numbers (2 or 4) to the game board
@@ -176,6 +179,43 @@ function App() {
     }
 
     // useEffect(() => {
+    //     let intervalId = null;
+    //     if (timer > 0) {
+    //         intervalId = setInterval(() => {
+    //             setTimer(timer => timer + 1);
+    //         }, 1000);
+    //     }
+    //     return () => clearInterval(intervalId);
+    // }, [timer]);
+
+
+
+
+
+
+    const [second, setSecond] = useState(0);
+    const [bestTime, setBestTime] = useState(0);
+
+    if (second > bestTime) {
+        setBestTime(second);
+    }
+
+    useEffect(() => {
+
+            const intervalId = setInterval(() => {
+                setTimer(timer => timer + 1);
+            }, 1000);
+
+
+            if (!isLose()) {
+                setSecond(timer);
+            }
+
+        return () => {clearInterval(intervalId)};
+    }, [timer]);
+
+
+    // useEffect(() => {
     //     initialize();
         // document.addEventListener("keydown", handleKeyDown);
     // }, [])
@@ -189,10 +229,10 @@ function App() {
             return 4;
         }
         if (num > 8) {
-            alert("введите число от 3 до 8");
+            alert("enter a number from 3 to 8");
             return 4;
         } else if (num < 3) {
-            alert("введите число от 3 до 8");
+            alert("enter a number from 3 to 8");
             return 4;
         }
         alert("start at the game")
@@ -271,11 +311,9 @@ function App() {
               alignItems: "center",
               justifyContent: "center",
               margin: "0 auto",
-              gap: 50
+              gap: "50px"
           }}>
-              <button>timer</button>
-
-              <div style={{display: "flex"}}>
+              <div style={{display: "flex", flexDirection: "column", gap: 10}}>
                   <button onClick={initialize} style={{...btn}}>
                       {sumArray(data) !== 0 ? "new game" : "start"}
                   </button>
@@ -286,19 +324,18 @@ function App() {
 
               <div>
               <h2 style={{color: "black",
-                     fontWeight: 600,
-                     fontSize: 25,
-                     fontFamily: "Arial, Helvetica, sans-serif"}
-          }>current: {sumArray(data)}
+                 fontWeight: 600,
+                 fontSize: 25,
+                 fontFamily: "Arial, Helvetica, sans-serif"}}>
+                  current: {sumArray(data)} <br/>
+                  best result: {savedResult}
               </h2>
               <h2 style={{color: "black",
                   fontWeight: 600,
                   fontSize: 25,
                   fontFamily: "Arial, Helvetica, sans-serif"}}>
-                  best result: {savedResult}
-              </h2>
-              <h2>
-                  Timer:
+                  Time: {sumArray(data) > 0 ? second ? second : timer : "PRESS START"} <br/>
+                  Best Time: {bestTime}
               </h2>
               </div>
           </div>
