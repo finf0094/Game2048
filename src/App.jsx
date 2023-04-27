@@ -7,12 +7,9 @@ import {btn} from "./styledComponent/styles.js";
 
 
 function App() {
-  const [data, setData] = useState([
-      [0, 0, 0, 0],
-      [0, 0, 0, 0],
-      [0, 0, 0, 0],
-      [0, 0, 0, 0]
-  ])
+    const [size, setSize] = useState(4)
+    const newDataArr = Array.from({ length: size }, () => Array.from({ length: size }, () => 0));
+    const [data, setData] = useState(newDataArr)
     const [bestResult, setBestResult] = useState(0);
 
     function sumArray(arr) {
@@ -36,12 +33,7 @@ function App() {
     }
 
     function initialize() {
-        const newData = [
-            [0, 0, 0, 0],
-            [0, 0, 0, 0],
-            [0, 0, 0, 0],
-            [0, 0, 0, 0]
-        ];
+        const newData = newDataArr;
 
         // Add two random numbers (2 or 4) to the game board
         addNumber(newData);
@@ -55,8 +47,8 @@ function App() {
     function addNumber(newData) {
         // Find all the empty cells on the game board
         const emptyCells = [];
-        for (let i = 0; i < 4; i++) {
-            for (let j = 0; j < 4; j++) {
+        for (let i = 0; i < size; i++) {
+            for (let j = 0; j < size; j++) {
                 if (newData[i][j] === 0) {
                     emptyCells.push([i, j]);
                 }
@@ -93,73 +85,73 @@ function App() {
         let newData = cloneDeep(data);
 
         if (direction === "left") {
-            for (let i = 0; i < 4; i++) {
+            for (let i = 0; i < size; i++) {
                 let arr = newData[i];
                 let newArr = [];
-                for (let j = 0; j < 4; j++) {
+                for (let j = 0; j < size; j++) {
                     if (arr[j] !== 0) {
                         newArr.push(arr[j]);
                     }
                 }
                 let combinedArr = combine(newArr);
-                while (combinedArr.length < 4) {
+                while (combinedArr.length < size) {
                     combinedArr.push(0);
                 }
                 newData[i] = combinedArr;
             }
         } else if (direction === "right") {
-            for (let i = 0; i < 4; i++) {
+            for (let i = 0; i < size; i++) {
                 let arr = newData[i];
                 let newArr = [];
-                for (let j = 3; j >= 0; j--) {
+                for (let j = size - 1; j >= 0; j--) {
                     if (arr[j] !== 0) {
                         newArr.unshift(arr[j]);
                     }
                 }
                 let combinedArr = combine(newArr);
-                while (combinedArr.length < 4) {
+                while (combinedArr.length < size) {
                     combinedArr.unshift(0);
                 }
                 newData[i] = combinedArr;
             }
         } else if (direction === "up") {
-            for (let j = 0; j < 4; j++) {
+            for (let j = 0; j < size; j++) {
                 let arr = [];
-                for (let i = 0; i < 4; i++) {
+                for (let i = 0; i < size; i++) {
                     arr.push(newData[i][j]);
                 }
                 let newArr = [];
-                for (let k = 0; k < 4; k++) {
+                for (let k = 0; k < size; k++) {
                     if (arr[k] !== 0) {
                         newArr.push(arr[k]);
                     }
                 }
                 let combinedArr = combine(newArr);
-                while (combinedArr.length < 4) {
+                while (combinedArr.length < size) {
                     combinedArr.push(0);
                 }
-                for (let m = 0; m < 4; m++) {
+                for (let m = 0; m < size; m++) {
                     newData[m][j] = combinedArr[m];
                 }
             }
         } else if (direction === "down") {
-            for (let j = 0; j < 4; j++) {
+            for (let j = 0; j < size; j++) {
                 let arr = [];
-                for (let i = 3; i >= 0; i--) {
+                for (let i = size - 1; i >= 0; i--) {
                     arr.push(newData[i][j]);
                 }
                 let newArr = [];
-                for (let k = 0; k < 4; k++) {
+                for (let k = 0; k < size; k++) {
                     if (arr[k] !== 0) {
                         newArr.push(arr[k]);
                     }
                 }
                 let combinedArr = combine(newArr);
-                while (combinedArr.length < 4) {
+                while (combinedArr.length < size) {
                     combinedArr.push(0);
                 }
-                for (let m = 3; m >= 0; m--) {
-                    newData[m][j] = combinedArr[3 - m];
+                for (let m = size - 1; m >= 0; m--) {
+                    newData[m][j] = combinedArr[size - 1 - m];
                 }
             }
         }
@@ -167,6 +159,8 @@ function App() {
         if (!isEqual(oldData, newData)) {
             addNumber(newData);
         }
+
+        setData(newData);
     }
 
     function handleKeyDown(event) {
@@ -187,6 +181,25 @@ function App() {
     // }, [])
 
     useEvent('keydown', handleKeyDown)
+
+    const changeDifficulty = () => {
+        const num = +prompt();
+        if (isNaN(num)) {
+            alert("Insert number!")
+            return 4;
+        }
+        if (num > 8) {
+            alert("введите число от 3 до 8");
+            return 4;
+        } else if (num < 3) {
+            alert("введите число от 3 до 8");
+            return 4;
+        }
+        alert("start at the game")
+
+        return num;
+    }
+
 
 
 
@@ -237,9 +250,15 @@ function App() {
               margin: "0 auto",
               gap: 50
           }}>
-              <button onClick={initialize} style={{...btn}}>
-                  {sumArray(data) !== 0 ? "new game" : "start"}
-              </button>
+
+              <div style={{display: "flex"}}>
+                  <button onClick={initialize} style={{...btn}}>
+                      {sumArray(data) !== 0 ? "new game" : "start"}
+                  </button>
+                  <button onClick={() => setSize(changeDifficulty())} style={{...btn}}>
+                      difficulty
+                  </button>
+              </div>
 
               <div>
               <h2 style={{color: "black",
