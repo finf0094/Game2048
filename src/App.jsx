@@ -201,13 +201,36 @@ function App() {
     }
 
 
-
-
     // isLose
+
+    function isLose() {
+        for (let i = 0; i < size; i++) {
+            for (let j = 0; j < size; j++) {
+                const currentBlock = data[i][j];
+                if (currentBlock === 0) {
+                    return false; // Game is not lost if there is at least one empty block
+                }
+                const rightBlock = j < size - 1 ? data[i][j + 1] : null;
+                const bottomBlock = i < size - 1 ? data[i + 1][j] : null;
+                if (currentBlock === rightBlock || currentBlock === bottomBlock) {
+                    return false; // Game is not lost if there are any adjacent blocks with similar numbers
+                }
+            }
+        }
+        return true; // Game is lost if all adjacent blocks have different numbers and there are no empty blocks
+    }
+
 
 
   return (
       <div>
+          <h2 style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              margin: "0 auto"}}>
+              {isLose() ? "You Lose" : ""}
+          </h2>
           <div style={{
               display: "flex",
               alignItems: "center",
@@ -250,6 +273,7 @@ function App() {
               margin: "0 auto",
               gap: 50
           }}>
+              <button>timer</button>
 
               <div style={{display: "flex"}}>
                   <button onClick={initialize} style={{...btn}}>
@@ -272,6 +296,9 @@ function App() {
                   fontSize: 25,
                   fontFamily: "Arial, Helvetica, sans-serif"}}>
                   best result: {savedResult}
+              </h2>
+              <h2>
+                  Timer:
               </h2>
               </div>
           </div>
