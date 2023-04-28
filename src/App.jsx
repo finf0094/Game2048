@@ -4,7 +4,6 @@ import Block from "./components/Block.jsx";
 import cloneDeep from "lodash.clonedeep"
 import {useEvent} from "./utils/useEvent.js";
 import {btn} from "./styledComponent/styles.js";
-import Timer from "./components/Timer.jsx";
 
 
 function App() {
@@ -45,7 +44,9 @@ function App() {
         // Update the state with the new game board
         setData(newData);
     }
-
+    useEffect(() => {
+        initialize();
+    }, [])
 
     function addNumber(newData) {
         // Find all the empty cells on the game board
@@ -200,6 +201,7 @@ function App() {
         setBestTime(second);
     }
 
+
     useEffect(() => {
 
             const intervalId = setInterval(() => {
@@ -212,6 +214,7 @@ function App() {
             }
 
         return () => {clearInterval(intervalId)};
+
     }, [timer]);
 
 
@@ -241,23 +244,40 @@ function App() {
     }
 
 
-    // isLose
 
     function isLose() {
         for (let i = 0; i < size; i++) {
             for (let j = 0; j < size; j++) {
                 const currentBlock = data[i][j];
                 if (currentBlock === 0) {
-                    return false; // Game is not lost if there is at least one empty block
+                    return false;
                 }
                 const rightBlock = j < size - 1 ? data[i][j + 1] : null;
                 const bottomBlock = i < size - 1 ? data[i + 1][j] : null;
                 if (currentBlock === rightBlock || currentBlock === bottomBlock) {
-                    return false; // Game is not lost if there are any adjacent blocks with similar numbers
+                    return false;
                 }
             }
         }
-        return true; // Game is lost if all adjacent blocks have different numbers and there are no empty blocks
+        return true;
+    }
+
+
+    const bot = () => {
+        const randomNum = Math.floor(Math.random() * 100) + 1;
+        if (randomNum > 75 && randomNum < 100) {
+            swipe("up");
+            console.log("up");yar
+        } else if (randomNum > 50 && randomNum < 75) {
+            swipe("down");
+            console.log("down");
+        } else if (randomNum > 25 && randomNum < 50) {
+            swipe("right");
+            console.log("right");
+        } else if (randomNum > 0 && randomNum < 25) {
+            swipe("left");
+            console.log("left");
+        }
     }
 
 
@@ -320,6 +340,9 @@ function App() {
                   <button onClick={() => setSize(changeDifficulty())} style={{...btn}}>
                       difficulty
                   </button>
+                  <button style={{...btn}} onClick={() => {
+                      bot();
+                  }}>Bot</button>
               </div>
 
               <div>
@@ -335,14 +358,11 @@ function App() {
                   fontSize: 25,
                   fontFamily: "Arial, Helvetica, sans-serif"}}>
                   Time: {sumArray(data) > 0 ? second ? second : timer : "PRESS START"} <br/>
-                  Best Time: {bestTime}
+                  Longest time: {bestTime}
               </h2>
               </div>
           </div>
       </div>
   )
 }
-
-
-
 export default App
