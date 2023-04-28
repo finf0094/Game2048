@@ -176,6 +176,8 @@ function App() {
             swipe("left");
         } else if (event.key === "ArrowRight" || event.key === "d") {
             swipe("right");
+        } else if (event.key === "x" || event.key === 88) {
+            swipe(getDirection(data));
         }
     }
 
@@ -263,23 +265,77 @@ function App() {
     }
 
 
-    const bot = () => {
-        const randomNum = Math.floor(Math.random() * 100) + 1;
-        if (randomNum > 75 && randomNum < 100) {
-            swipe("up");
-            console.log("up");yar
-        } else if (randomNum > 50 && randomNum < 75) {
-            swipe("down");
-            console.log("down");
-        } else if (randomNum > 25 && randomNum < 50) {
-            swipe("right");
-            console.log("right");
-        } else if (randomNum > 0 && randomNum < 25) {
-            swipe("left");
-            console.log("left");
+    function getDirection(data) {
+        const [n, m] = [data.length, data[0].length];
+        let max = -1, dir = "";
+
+        // Проверяем, есть ли пустые ячейки на игровом поле
+        let hasEmpty = false;
+        for (let i = 0; i < n; i++) {
+            for (let j = 0; j < m; j++) {
+                if (data[i][j] === 0) {
+                    hasEmpty = true;
+                    break;
+                }
+            }
+            if (hasEmpty) {
+                break;
+            }
         }
+
+        // Если есть пустые ячейки, то двигаемся в случайном направлении
+        if (hasEmpty) {
+            const randomIndex = Math.floor(Math.random() * 4);
+            switch (randomIndex) {
+                case 0:
+                    dir = "up";
+                    break;
+                case 1:
+                    dir = "down";
+                    break;
+                case 2:
+                    dir = "left";
+                    break;
+                case 3:
+                    dir = "right";
+                    break;
+                default:
+                    break;
+            }
+        } else {
+            // Если нет пустых ячеек, то ищем максимальный элемент и двигаемся в его направлении
+            for (let i = 0; i < n; i++) {
+                for (let j = 0; j < m; j++) {
+                    if (data[i][j] > max) {
+                        max = data[i][j];
+                    }
+                }
+            }
+            for (let i = 0; i < n; i++) {
+                for (let j = 0; j < m; j++) {
+                    if (data[i][j] === max) {
+                        // Проверяем, в каком направлении максимальный элемент находится относительно пустых ячеек
+                        if (i > 0 && data[i-1][j] === 0) {
+                            dir = "up";
+                        } else if (i < n-1 && data[i+1][j] === 0) {
+                            dir = "down";
+                        } else if (j > 0 && data[i][j-1] === 0) {
+                            dir = "left";
+                        } else if (j < m-1 && data[i][j+1] === 0) {
+                            dir = "right";
+                        }
+                    }
+                }
+            }
+        }
+
+        return dir;
     }
 
+
+    const bot = () => {
+
+    }
 
 
   return (
@@ -341,7 +397,7 @@ function App() {
                       difficulty
                   </button>
                   <button style={{...btn}} onClick={() => {
-                      bot();
+                      swipe(getDirection(data))
                   }}>Bot</button>
               </div>
 
