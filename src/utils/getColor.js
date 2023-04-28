@@ -16,5 +16,7 @@ export const getColor = (num) => {
             return "#FFD700";
         case 256:
             return "#FFFF00";
+        default:
+            return "#FFFAF0";
     }
 }

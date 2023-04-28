@@ -23,7 +23,7 @@ const Block = ({num}) => {
     return (
         <div
             style={{
-                backgroundColor: num == 0 ? "lightgray" : getColor(num),
+                backgroundColor: num === 0 ? "lightgray" : getColor(num),
                 ...blockStyle,
                 color: num === 2 || num === 4 ? "yellow" : "",
                 transition: "all 100ms ease"

@@ -4,6 +4,7 @@ import Block from "./components/Block.jsx";
 import cloneDeep from "lodash.clonedeep"
 import {useEvent} from "./utils/useEvent.js";
 import {btn} from "./styledComponent/styles.js";
+import Control from "./components/Control.jsx";
 
 
 function App() {
@@ -339,6 +340,17 @@ function App() {
 
 
   return (
+    <div style={{
+        display:"flex",
+        alignItems: "center",
+        justifyContent: "center",
+        margin: "0 auto",
+        gap: "5vmax" }}>
+        <Control
+            keyDown={"s"}
+            keyLeft={"a"}
+            keyUp={"w"}
+            keyRight={"d"}/>
       <div>
           <h2 style={{
               display: "flex",
@@ -419,6 +431,8 @@ function App() {
               </div>
           </div>
       </div>
+        <Control/>
+    </div>
   )
 }
 export default App
